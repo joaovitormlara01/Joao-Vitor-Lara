@@ -1,0 +1,251 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+
+public class GamesMergesort {
+    int id;
+    String name, date;
+    int owners;
+    float price;
+    String[] langs, pubs, devs, cats, genres, tags;
+    int meta, ach;
+    float user;
+
+    static long comp = 0, mov = 0;
+
+    // main
+    public static void main(String[] args) throws Exception {
+        System.setOut(new PrintStream(System.out, true, "UTF-8")); // força utf-8
+
+        long inicio = System.currentTimeMillis();
+        GamesMergesort[] base = carregar("/tmp/games.csv");
+
+        Scanner sc = new Scanner(System.in);
+        GamesMergesort[] vet = new GamesMergesort[500];
+        int n = 0;
+        String s = sc.nextLine();
+
+        // lê ids até fim
+        while (!s.equals("FIM")) {
+            int alvo = Integer.parseInt(s);
+            for (int i = 0; i < base.length; i++) {
+                if (base[i] != null && base[i].id == alvo) {
+                    vet[n++] = base[i];
+                    break;
+                }
+            }
+            s = sc.nextLine();
+        }
+        sc.close();
+
+        // cria cópias para ordenar de formas diferentes
+        GamesMergesort[] top = Arrays.copyOf(vet, n);
+        GamesMergesort[] low = Arrays.copyOf(vet, n);
+
+        // ordena com direções diferentes
+        mergesort(top, 0, n - 1, true); // mais caros (price desc, id desc)
+        mergesort(low, 0, n - 1, false); // mais baratos (price asc, id asc)
+
+        long fim = System.currentTimeMillis();
+        long tempo = fim - inicio;
+
+        // mostra os 5 mais caros
+        System.out.println("| 5 precos mais caros |");
+        for (int i = 0; i < 5 && i < n; i++)
+            top[i].printar();
+        System.out.println("");
+        System.out.println("| 5 precos mais baratos |");
+        for (int i = 0; i < 5 && i < n; i++)
+            low[i].printar();
+
+        // gera log
+        criarLog("885156_mergesort.txt", comp, mov, tempo);
+
+    }
+
+    // merge sort
+    public static void mergesort(GamesMergesort[] v, int esq, int dir, boolean desc) {
+        if (esq < dir) {
+            int meio = (esq + dir) / 2;
+            mergesort(v, esq, meio, desc);
+            mergesort(v, meio + 1, dir, desc);
+            intercalar(v, esq, meio, dir, desc);
+        }
+    }
+
+    // intercalar com desempate diferente para caro/barato
+    public static void intercalar(GamesMergesort[] v, int esq, int meio, int dir, boolean desc) {
+        int n1 = meio - esq + 1, n2 = dir - meio;
+        GamesMergesort[] e = new GamesMergesort[n1];
+        GamesMergesort[] d = new GamesMergesort[n2];
+        for (int i = 0; i < n1; i++)
+            e[i] = v[esq + i];
+        for (int j = 0; j < n2; j++)
+            d[j] = v[meio + 1 + j];
+
+        int i = 0, j = 0, k = esq;
+
+        while (i < n1 && j < n2) {
+            comp++; // conta comparação
+            boolean pegaE;
+
+            if (!desc) {
+                // barato: price asc; empate -> id asc
+                if (e[i].price < d[j].price)
+                    pegaE = true;
+                else if (e[i].price > d[j].price)
+                    pegaE = false;
+                else
+                    pegaE = (e[i].id < d[j].id);
+            } else {
+                // caro: price desc; empate -> id desc
+                if (e[i].price > d[j].price)
+                    pegaE = true;
+                else if (e[i].price < d[j].price)
+                    pegaE = false;
+                else
+                    pegaE = (e[i].id > d[j].id);
+            }
+
+            if (pegaE)
+                v[k++] = e[i++];
+            else
+                v[k++] = d[j++];
+            mov++; // conta movimentação
+        }
+
+        while (i < n1) {
+            v[k++] = e[i++];
+            mov++;
+        }
+        while (j < n2) {
+            v[k++] = d[j++];
+            mov++;
+        }
+    }
+
+    // lê csv
+    public static GamesMergesort[] carregar(String arq) {
+        GamesMergesort[] vet = new GamesMergesort[20000];
+        try {
+            Scanner sc = new Scanner(new FileReader(arq));
+            sc.nextLine();
+            int i = 0;
+            while (sc.hasNextLine()) {
+                String[] c = sc.nextLine().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                GamesMergesort g = new GamesMergesort();
+                g.id = parseInt(c, 0);
+                g.name = limpa(c, 1);
+                g.date = data(limpa(c, 2));
+                g.owners = limpaInt(limpa(c, 3));
+                g.price = limpaFloat(limpa(c, 4));
+                g.langs = lista(limpa(c, 5));
+                g.meta = parseInt(c, 6);
+                g.user = limpaFloat(limpa(c, 7));
+                g.ach = parseInt(c, 8);
+                g.pubs = lista(getSafe(c, 9));
+                g.devs = lista(getSafe(c, 10));
+                g.cats = lista(getSafe(c, 11));
+                g.genres = lista(getSafe(c, 12));
+                g.tags = lista(getSafe(c, 13));
+                vet[i++] = g;
+            }
+            sc.close();
+        } catch (Exception e) {
+            System.out.println("erro: " + e.getMessage());
+        }
+        return vet;
+    }
+
+    // imprime jogo com colchetes e sem aspas
+    void printar() {
+        System.out.print("=> " + id + " ## " + name + " ## " + date + " ## " + owners + " ## " + price);
+        System.out.print(" ## " + limpaLista(langs) + " ## " + meta + " ## " + user);
+        System.out.print(" ## " + ach + " ## " + limpaLista(pubs) + " ## " + limpaLista(devs));
+        System.out.print(" ## " + limpaLista(cats) + " ## " + limpaLista(genres) + " ## " + limpaLista(tags));
+        System.out.println(" ##");
+    }
+
+    // remove todas as aspas internas mas mantém colchetes
+    static String limpaLista(String[] v) {
+        if (v == null || v.length == 0)
+            return "[]";
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int i = 0; i < v.length; i++) {
+            // remove aspas simples e duplas em qualquer posição
+            String item = v[i].replace("\"", "").replace("'", "").trim();
+            sb.append(item);
+            if (i < v.length - 1)
+                sb.append(", ");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    // funções simples
+    static String limpa(String[] v, int i) {
+        return (i < v.length) ? v[i].replace("\"", "") : "";
+    }
+
+    static String getSafe(String[] v, int i) {
+        return (i < v.length) ? v[i] : "";
+    }
+
+    static int parseInt(String[] v, int i) {
+        try {
+            return Integer.parseInt(v[i].replaceAll("[^0-9-]", ""));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    static int limpaInt(String s) {
+        try {
+            return Integer.parseInt(s.replaceAll("[^0-9]", ""));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    static float limpaFloat(String s) {
+        try {
+            if (s == null)
+                return 0f;
+            s = s.replace("Free to Play", "0").trim();
+            if (s.length() == 0)
+                return 0f;
+            return Float.parseFloat(s);
+        } catch (Exception e) {
+            return 0f;
+        }
+    }
+
+    static String[] lista(String s) {
+        if (s == null || s.isEmpty())
+            return new String[0];
+        s = s.replace("[", "").replace("]", "").trim();
+        if (s.isEmpty())
+            return new String[0];
+        return s.split("\\s*,\\s*");
+    }
+
+    static String data(String raw) {
+        if (raw == null || raw.isEmpty())
+            return "01/01/1970";
+        try {
+            Date d = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH).parse(raw);
+            return new SimpleDateFormat("dd/MM/yyyy").format(d);
+        } catch (Exception e) {
+            return "01/01/1970";
+        }
+    }
+
+    static void criarLog(String nome, long c, long m, long t) {
+        try (PrintWriter pw = new PrintWriter(new FileWriter(nome))) {
+            pw.println("885156 " + c + " " + m + " " + t);
+        } catch (IOException e) {
+            System.out.println("erro log");
+        }
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "appService.preDeployTask": "package:unipark-backend-rubrica",
+    "appService.deploySubpath": "target\\unipark-backend-rubrica-0.0.1.jar",
+    "java.compile.nullAnalysis.mode": "automatic",
+    "appService.defaultWebAppToDeploy": "/subscriptions/15ec760c-e2ef-478a-b28f-e99da5925478/resourceGroups/unipark-backend-rgg/providers/Microsoft.Web/sites/unipark-backend-api"
+}

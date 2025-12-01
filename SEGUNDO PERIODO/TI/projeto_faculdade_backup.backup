@@ -1,0 +1,1167 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict dlbpKARpMLUPVVCrVwMbwmuxD1cJi6JRjbTAapVP9HCsOHk2ordviMZNLQ7bL6u
+
+-- Dumped from database version 17.6
+-- Dumped by pg_dump version 17.6
+
+-- Started on 2025-11-28 15:09:58
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 5 (class 2615 OID 2200)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: azure_pg_admin
+--
+
+-- *not* creating schema, since initdb creates it
+
+
+ALTER SCHEMA public OWNER TO azure_pg_admin;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 218 (class 1259 OID 24823)
+-- Name: carro; Type: TABLE; Schema: public; Owner: brunomoacir
+--
+
+CREATE TABLE public.carro (
+    placa character varying(10) NOT NULL,
+    modelo character varying(50) NOT NULL,
+    dono_cpe character varying(20) NOT NULL
+);
+
+
+ALTER TABLE public.carro OWNER TO brunomoacir;
+
+--
+-- TOC entry 224 (class 1259 OID 24868)
+-- Name: movimentacao; Type: TABLE; Schema: public; Owner: brunomoacir
+--
+
+CREATE TABLE public.movimentacao (
+    id bigint NOT NULL,
+    placa character varying(10),
+    vaga_id bigint,
+    entrada timestamp with time zone,
+    saida timestamp with time zone,
+    tipo character varying(50) NOT NULL
+);
+
+
+ALTER TABLE public.movimentacao OWNER TO brunomoacir;
+
+--
+-- TOC entry 223 (class 1259 OID 24867)
+-- Name: movimentacao_id_seq; Type: SEQUENCE; Schema: public; Owner: brunomoacir
+--
+
+CREATE SEQUENCE public.movimentacao_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.movimentacao_id_seq OWNER TO brunomoacir;
+
+--
+-- TOC entry 4216 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: movimentacao_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brunomoacir
+--
+
+ALTER SEQUENCE public.movimentacao_id_seq OWNED BY public.movimentacao.id;
+
+
+--
+-- TOC entry 217 (class 1259 OID 24818)
+-- Name: pessoa; Type: TABLE; Schema: public; Owner: brunomoacir
+--
+
+CREATE TABLE public.pessoa (
+    cpe character varying(20) NOT NULL,
+    nome character varying(100) NOT NULL,
+    tipo character varying(50) NOT NULL
+);
+
+
+ALTER TABLE public.pessoa OWNER TO brunomoacir;
+
+--
+-- TOC entry 219 (class 1259 OID 24833)
+-- Name: usuario; Type: TABLE; Schema: public; Owner: brunomoacir
+--
+
+CREATE TABLE public.usuario (
+    id character varying(20) NOT NULL,
+    nome character varying(100) NOT NULL,
+    email character varying(100),
+    senha_hash character varying(255),
+    perfil character varying(50),
+    pessoa_cpe character varying(20)
+);
+
+
+ALTER TABLE public.usuario OWNER TO brunomoacir;
+
+--
+-- TOC entry 222 (class 1259 OID 24856)
+-- Name: vaga; Type: TABLE; Schema: public; Owner: brunomoacir
+--
+
+CREATE TABLE public.vaga (
+    id bigint NOT NULL,
+    tipo character varying(50) NOT NULL,
+    setor character varying(50),
+    status character varying(50) NOT NULL,
+    ocupante_placa character varying(10)
+);
+
+
+ALTER TABLE public.vaga OWNER TO brunomoacir;
+
+--
+-- TOC entry 221 (class 1259 OID 24855)
+-- Name: vaga_id_seq; Type: SEQUENCE; Schema: public; Owner: brunomoacir
+--
+
+CREATE SEQUENCE public.vaga_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.vaga_id_seq OWNER TO brunomoacir;
+
+--
+-- TOC entry 4217 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: vaga_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: brunomoacir
+--
+
+ALTER SEQUENCE public.vaga_id_seq OWNED BY public.vaga.id;
+
+
+--
+-- TOC entry 220 (class 1259 OID 24845)
+-- Name: visitante; Type: TABLE; Schema: public; Owner: brunomoacir
+--
+
+CREATE TABLE public.visitante (
+    documento character varying(100),
+    pessoa_cpe character varying(20),
+    nome character varying(150),
+    placa character varying(10),
+    categoria character varying(50),
+    empresa character varying(150),
+    contato character varying(30),
+    status character varying(20) DEFAULT 'Ativo'::character varying,
+    criado_em timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+);
+
+
+ALTER TABLE public.visitante OWNER TO brunomoacir;
+
+--
+-- TOC entry 3966 (class 2604 OID 24871)
+-- Name: movimentacao id; Type: DEFAULT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.movimentacao ALTER COLUMN id SET DEFAULT nextval('public.movimentacao_id_seq'::regclass);
+
+
+--
+-- TOC entry 3965 (class 2604 OID 24859)
+-- Name: vaga id; Type: DEFAULT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.vaga ALTER COLUMN id SET DEFAULT nextval('public.vaga_id_seq'::regclass);
+
+
+--
+-- TOC entry 4129 (class 0 OID 24823)
+-- Dependencies: 218
+-- Data for Name: carro; Type: TABLE DATA; Schema: public; Owner: brunomoacir
+--
+
+COPY public.carro (placa, modelo, dono_cpe) FROM stdin;
+ADM1234	VW Gol	00000000001
+ATD5678	Fiat Palio	00000000002
+OPR9012	Chevrolet Onix	00000000003
+ABC1234	Hyundai HB20	00000000004
+XYZ5678	Ford Ka	00000000005
+DEF9012	Renault Kwid	00000000007
+ABB1234	Honda Civic	00000000011
+GHI3456	Ford Ka	0000000011
+JKL7890	Hilux	0000000007
+MNO1234	HB20	0000000006
+PQR5678	Civic	0000000005
+LUC2021	Astra	0000000004
+PCD1234	Kwid	0000000010
+EDR1345	Chevrolet Onix	00000000004
+\.
+
+
+--
+-- TOC entry 4135 (class 0 OID 24868)
+-- Dependencies: 224
+-- Data for Name: movimentacao; Type: TABLE DATA; Schema: public; Owner: brunomoacir
+--
+
+COPY public.movimentacao (id, placa, vaga_id, entrada, saida, tipo) FROM stdin;
+25	LUC2021	1	2025-11-26 17:10:02.420029+00	2025-11-26 17:25:02.420029+00	AUTORIZADO
+26	ABC1234	\N	2025-11-26 17:20:02.420029+00	\N	NEGADO
+27	PCD1234	18	2025-11-26 17:30:02.420029+00	\N	AUTORIZADO
+28	XYZ5678	6	2025-11-26 17:35:02.420029+00	\N	AUTORIZADO
+30	EDR1345	1	2025-11-14 12:36:22+00	\N	AUTORIZADO
+\.
+
+
+--
+-- TOC entry 4128 (class 0 OID 24818)
+-- Dependencies: 217
+-- Data for Name: pessoa; Type: TABLE DATA; Schema: public; Owner: brunomoacir
+--
+
+COPY public.pessoa (cpe, nome, tipo) FROM stdin;
+00000000000	Administrador Principal	USUARIO
+000000000001	Administrador 2 UniPark	ADMIN
+00000000001	João Silva	FUNCIONARIO
+00000000002	Maria Santos	FUNCIONARIO
+00000000003	Pedro Costa	FUNCIONARIO
+00000000004	Ana Oliveira	ALUNO
+00000000005	Carlos Ferreira	ALUNO
+00000000006	Lucia Mendes	ALUNO
+00000000007	Roberto Lima	FUNCIONARIO
+00000000008	Patricia Rocha	FUNCIONARIO
+00000000009	Miguel Alves	PCD
+00000000010	Carmen Torres	PCD
+00000000011	Bruno Moacir	ALUNO
+99999999999	Admin Principal	ADMIN
+99999999998	Administrador 2	ADMIN
+0000000011	Bruno Moacir	ALUNO
+0000000007	Roberto Lima	FUNCIONARIO
+0000000006	Lucia Mendes	ALUNO
+0000000005	Pedro Costa	FUNCIONARIO
+0000000004	Ana Oliveira	ALUNO
+0000000010	Carmen Torres	PCD
+\.
+
+
+--
+-- TOC entry 4130 (class 0 OID 24833)
+-- Dependencies: 219
+-- Data for Name: usuario; Type: TABLE DATA; Schema: public; Owner: brunomoacir
+--
+
+COPY public.usuario (id, nome, email, senha_hash, perfil, pessoa_cpe) FROM stdin;
+admin	Admin UniPark	admin@puc.com	$2a$12$3Jwvy9gdytfIGSqUgGOlOupxTJfwrTlXMLfYwB3qVRm.9hQJoldY6	ADMIN	00000000000
+admin2	Administrador 2 UniPark	admin2@puc.com	$2a$10$tflFnnYRXX0dioQ/gd2.NeG8OtzABLJNb2yKfTMrHDA6Jt73PaeFC	ADMIN	000000000001
+\.
+
+
+--
+-- TOC entry 4133 (class 0 OID 24856)
+-- Dependencies: 222
+-- Data for Name: vaga; Type: TABLE DATA; Schema: public; Owner: brunomoacir
+--
+
+COPY public.vaga (id, tipo, setor, status, ocupante_placa) FROM stdin;
+41	COMUM	C	LIVRE	\N
+42	COMUM	C	LIVRE	\N
+43	COMUM	C	LIVRE	\N
+44	COMUM	C	LIVRE	\N
+45	COMUM	C	LIVRE	\N
+46	COMUM	C	LIVRE	\N
+47	COMUM	C	LIVRE	\N
+48	COMUM	C	LIVRE	\N
+49	COMUM	C	LIVRE	\N
+50	COMUM	C	LIVRE	\N
+51	COMUM	C	LIVRE	\N
+52	COMUM	C	LIVRE	\N
+53	COMUM	C	LIVRE	\N
+54	COMUM	C	LIVRE	\N
+55	FUNCIONARIO	C	LIVRE	\N
+56	FUNCIONARIO	C	LIVRE	\N
+57	FUNCIONARIO	C	LIVRE	\N
+58	PCD	C	LIVRE	\N
+59	PCD	C	LIVRE	\N
+60	VISITANTE ESPECIAL	C	LIVRE	\N
+34	COMUM	A	UNDEFINED	\N
+1	COMUM	A	OCUPADA	ABC1234
+2	COMUM	A	LIVRE	\N
+3	COMUM	A	LIVRE	\N
+4	COMUM	A	LIVRE	\N
+5	COMUM	A	LIVRE	\N
+6	COMUM	A	OCUPADA	XYZ5678
+7	COMUM	A	LIVRE	\N
+8	COMUM	A	LIVRE	\N
+9	COMUM	A	LIVRE	\N
+10	COMUM	A	LIVRE	\N
+11	COMUM	A	LIVRE	\N
+12	COMUM	A	LIVRE	\N
+13	COMUM	A	LIVRE	\N
+14	COMUM	A	LIVRE	\N
+15	FUNCIONARIO	A	LIVRE	\N
+16	FUNCIONARIO	A	OCUPADA	DEF9012
+17	FUNCIONARIO	A	LIVRE	\N
+18	PCD	A	LIVRE	\N
+19	PCD	A	LIVRE	\N
+20	VISITANTE ESPECIAL	A	LIVRE	\N
+21	COMUM	B	LIVRE	\N
+22	COMUM	B	LIVRE	\N
+23	COMUM	B	LIVRE	\N
+24	COMUM	B	LIVRE	\N
+25	COMUM	B	LIVRE	\N
+26	COMUM	B	LIVRE	\N
+27	COMUM	B	LIVRE	\N
+28	COMUM	B	LIVRE	\N
+29	COMUM	B	LIVRE	\N
+30	COMUM	B	LIVRE	\N
+31	COMUM	B	LIVRE	\N
+32	COMUM	B	LIVRE	\N
+33	COMUM	B	LIVRE	\N
+35	FUNCIONARIO	B	LIVRE	\N
+36	FUNCIONARIO	B	BLOQUEADA	\N
+37	FUNCIONARIO	B	LIVRE	\N
+38	PCD	B	LIVRE	\N
+39	PCD	B	LIVRE	\N
+40	VISITANTE ESPECIAL	B	LIVRE	\N
+\.
+
+
+--
+-- TOC entry 4131 (class 0 OID 24845)
+-- Dependencies: 220
+-- Data for Name: visitante; Type: TABLE DATA; Schema: public; Owner: brunomoacir
+--
+
+COPY public.visitante (documento, pessoa_cpe, nome, placa, categoria, empresa, contato, status, criado_em) FROM stdin;
+123.456.789-01	\N	José Pereira	VIS1234	Visitante Comum	Empresa ABC Ltda	(11) 99999-1234	Ativo	2025-11-12 20:45:44
+987.654.321-02	\N	Sandra Machado	VIS5678	Visitante Especial	Ministério da Educação	(11) 88888-5678	Ativo	2025-11-12 20:45:44
+456.789.123-03	\N	Fernando Dias	VIS9012	Visitante Comum	Fornecedor XYZ	(11) 77777-9012	Ativo	2025-11-12 20:45:44
+789.123.456-04	\N	Mariana Castro	ESP3456	Visitante Especial	Conselho Nacional de Educação	(11) 66666-3456	Ativo	2025-11-12 20:45:44
+321.654.987-05	\N	Ricardo Nunes	VIS7890	Visitante Comum	Empresa Beta Serviços	(11) 55555-7890	Ativo	2025-11-12 20:45:44
+16802534532	\N	gabriel	ASC1234	Visitante Comum	puc minas	(31) 98220-3035	Ativo	2025-11-27 00:53:55.543801
+\.
+
+
+--
+-- TOC entry 4218 (class 0 OID 0)
+-- Dependencies: 223
+-- Name: movimentacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brunomoacir
+--
+
+SELECT pg_catalog.setval('public.movimentacao_id_seq', 30, true);
+
+
+--
+-- TOC entry 4219 (class 0 OID 0)
+-- Dependencies: 221
+-- Name: vaga_id_seq; Type: SEQUENCE SET; Schema: public; Owner: brunomoacir
+--
+
+SELECT pg_catalog.setval('public.vaga_id_seq', 57, true);
+
+
+--
+-- TOC entry 3970 (class 2606 OID 24827)
+-- Name: carro carro_pkey; Type: CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.carro
+    ADD CONSTRAINT carro_pkey PRIMARY KEY (placa);
+
+
+--
+-- TOC entry 3976 (class 2606 OID 24873)
+-- Name: movimentacao movimentacao_pkey; Type: CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.movimentacao
+    ADD CONSTRAINT movimentacao_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3968 (class 2606 OID 24822)
+-- Name: pessoa pessoa_pkey; Type: CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.pessoa
+    ADD CONSTRAINT pessoa_pkey PRIMARY KEY (cpe);
+
+
+--
+-- TOC entry 3972 (class 2606 OID 24839)
+-- Name: usuario usuario_pkey; Type: CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.usuario
+    ADD CONSTRAINT usuario_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3974 (class 2606 OID 24861)
+-- Name: vaga vaga_pkey; Type: CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.vaga
+    ADD CONSTRAINT vaga_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3977 (class 2606 OID 24828)
+-- Name: carro fk_carro_dono; Type: FK CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.carro
+    ADD CONSTRAINT fk_carro_dono FOREIGN KEY (dono_cpe) REFERENCES public.pessoa(cpe);
+
+
+--
+-- TOC entry 3981 (class 2606 OID 24874)
+-- Name: movimentacao fk_mov_placa; Type: FK CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.movimentacao
+    ADD CONSTRAINT fk_mov_placa FOREIGN KEY (placa) REFERENCES public.carro(placa);
+
+
+--
+-- TOC entry 3982 (class 2606 OID 24879)
+-- Name: movimentacao fk_mov_vaga; Type: FK CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.movimentacao
+    ADD CONSTRAINT fk_mov_vaga FOREIGN KEY (vaga_id) REFERENCES public.vaga(id);
+
+
+--
+-- TOC entry 3978 (class 2606 OID 24840)
+-- Name: usuario fk_usuario_pessoa; Type: FK CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.usuario
+    ADD CONSTRAINT fk_usuario_pessoa FOREIGN KEY (pessoa_cpe) REFERENCES public.pessoa(cpe);
+
+
+--
+-- TOC entry 3980 (class 2606 OID 24862)
+-- Name: vaga fk_vaga_carro; Type: FK CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.vaga
+    ADD CONSTRAINT fk_vaga_carro FOREIGN KEY (ocupante_placa) REFERENCES public.carro(placa);
+
+
+--
+-- TOC entry 3979 (class 2606 OID 24850)
+-- Name: visitante fk_visitante_pessoa; Type: FK CONSTRAINT; Schema: public; Owner: brunomoacir
+--
+
+ALTER TABLE ONLY public.visitante
+    ADD CONSTRAINT fk_visitante_pessoa FOREIGN KEY (pessoa_cpe) REFERENCES public.pessoa(cpe);
+
+
+--
+-- TOC entry 4141 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: FUNCTION pg_replication_origin_advance(text, pg_lsn); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_advance(text, pg_lsn) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4142 (class 0 OID 0)
+-- Dependencies: 232
+-- Name: FUNCTION pg_replication_origin_create(text); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_create(text) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4143 (class 0 OID 0)
+-- Dependencies: 233
+-- Name: FUNCTION pg_replication_origin_drop(text); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_drop(text) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4144 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: FUNCTION pg_replication_origin_oid(text); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_oid(text) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4145 (class 0 OID 0)
+-- Dependencies: 226
+-- Name: FUNCTION pg_replication_origin_progress(text, boolean); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_progress(text, boolean) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4146 (class 0 OID 0)
+-- Dependencies: 234
+-- Name: FUNCTION pg_replication_origin_session_is_setup(); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_session_is_setup() TO azure_pg_admin;
+
+
+--
+-- TOC entry 4147 (class 0 OID 0)
+-- Dependencies: 235
+-- Name: FUNCTION pg_replication_origin_session_progress(boolean); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_session_progress(boolean) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4148 (class 0 OID 0)
+-- Dependencies: 236
+-- Name: FUNCTION pg_replication_origin_session_reset(); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_session_reset() TO azure_pg_admin;
+
+
+--
+-- TOC entry 4149 (class 0 OID 0)
+-- Dependencies: 237
+-- Name: FUNCTION pg_replication_origin_session_setup(text); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_session_setup(text) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4150 (class 0 OID 0)
+-- Dependencies: 240
+-- Name: FUNCTION pg_replication_origin_xact_reset(); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_xact_reset() TO azure_pg_admin;
+
+
+--
+-- TOC entry 4151 (class 0 OID 0)
+-- Dependencies: 238
+-- Name: FUNCTION pg_replication_origin_xact_setup(pg_lsn, timestamp with time zone); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_replication_origin_xact_setup(pg_lsn, timestamp with time zone) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4152 (class 0 OID 0)
+-- Dependencies: 239
+-- Name: FUNCTION pg_show_replication_origin_status(OUT local_id oid, OUT external_id text, OUT remote_lsn pg_lsn, OUT local_lsn pg_lsn); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_show_replication_origin_status(OUT local_id oid, OUT external_id text, OUT remote_lsn pg_lsn, OUT local_lsn pg_lsn) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4153 (class 0 OID 0)
+-- Dependencies: 228
+-- Name: FUNCTION pg_stat_reset(); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_stat_reset() TO azure_pg_admin;
+
+
+--
+-- TOC entry 4154 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: FUNCTION pg_stat_reset_shared(target text); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_stat_reset_shared(target text) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4155 (class 0 OID 0)
+-- Dependencies: 230
+-- Name: FUNCTION pg_stat_reset_single_function_counters(oid); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_stat_reset_single_function_counters(oid) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4156 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: FUNCTION pg_stat_reset_single_table_counters(oid); Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT ALL ON FUNCTION pg_catalog.pg_stat_reset_single_table_counters(oid) TO azure_pg_admin;
+
+
+--
+-- TOC entry 4157 (class 0 OID 0)
+-- Dependencies: 98
+-- Name: COLUMN pg_config.name; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(name) ON TABLE pg_catalog.pg_config TO azure_pg_admin;
+
+
+--
+-- TOC entry 4158 (class 0 OID 0)
+-- Dependencies: 98
+-- Name: COLUMN pg_config.setting; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(setting) ON TABLE pg_catalog.pg_config TO azure_pg_admin;
+
+
+--
+-- TOC entry 4159 (class 0 OID 0)
+-- Dependencies: 94
+-- Name: COLUMN pg_hba_file_rules.line_number; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(line_number) ON TABLE pg_catalog.pg_hba_file_rules TO azure_pg_admin;
+
+
+--
+-- TOC entry 4160 (class 0 OID 0)
+-- Dependencies: 94
+-- Name: COLUMN pg_hba_file_rules.type; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(type) ON TABLE pg_catalog.pg_hba_file_rules TO azure_pg_admin;
+
+
+--
+-- TOC entry 4161 (class 0 OID 0)
+-- Dependencies: 94
+-- Name: COLUMN pg_hba_file_rules.database; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(database) ON TABLE pg_catalog.pg_hba_file_rules TO azure_pg_admin;
+
+
+--
+-- TOC entry 4162 (class 0 OID 0)
+-- Dependencies: 94
+-- Name: COLUMN pg_hba_file_rules.user_name; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(user_name) ON TABLE pg_catalog.pg_hba_file_rules TO azure_pg_admin;
+
+
+--
+-- TOC entry 4163 (class 0 OID 0)
+-- Dependencies: 94
+-- Name: COLUMN pg_hba_file_rules.address; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(address) ON TABLE pg_catalog.pg_hba_file_rules TO azure_pg_admin;
+
+
+--
+-- TOC entry 4164 (class 0 OID 0)
+-- Dependencies: 94
+-- Name: COLUMN pg_hba_file_rules.netmask; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(netmask) ON TABLE pg_catalog.pg_hba_file_rules TO azure_pg_admin;
+
+
+--
+-- TOC entry 4165 (class 0 OID 0)
+-- Dependencies: 94
+-- Name: COLUMN pg_hba_file_rules.auth_method; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(auth_method) ON TABLE pg_catalog.pg_hba_file_rules TO azure_pg_admin;
+
+
+--
+-- TOC entry 4166 (class 0 OID 0)
+-- Dependencies: 94
+-- Name: COLUMN pg_hba_file_rules.options; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(options) ON TABLE pg_catalog.pg_hba_file_rules TO azure_pg_admin;
+
+
+--
+-- TOC entry 4167 (class 0 OID 0)
+-- Dependencies: 94
+-- Name: COLUMN pg_hba_file_rules.error; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(error) ON TABLE pg_catalog.pg_hba_file_rules TO azure_pg_admin;
+
+
+--
+-- TOC entry 4168 (class 0 OID 0)
+-- Dependencies: 145
+-- Name: COLUMN pg_replication_origin_status.local_id; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(local_id) ON TABLE pg_catalog.pg_replication_origin_status TO azure_pg_admin;
+
+
+--
+-- TOC entry 4169 (class 0 OID 0)
+-- Dependencies: 145
+-- Name: COLUMN pg_replication_origin_status.external_id; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(external_id) ON TABLE pg_catalog.pg_replication_origin_status TO azure_pg_admin;
+
+
+--
+-- TOC entry 4170 (class 0 OID 0)
+-- Dependencies: 145
+-- Name: COLUMN pg_replication_origin_status.remote_lsn; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(remote_lsn) ON TABLE pg_catalog.pg_replication_origin_status TO azure_pg_admin;
+
+
+--
+-- TOC entry 4171 (class 0 OID 0)
+-- Dependencies: 145
+-- Name: COLUMN pg_replication_origin_status.local_lsn; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(local_lsn) ON TABLE pg_catalog.pg_replication_origin_status TO azure_pg_admin;
+
+
+--
+-- TOC entry 4172 (class 0 OID 0)
+-- Dependencies: 99
+-- Name: COLUMN pg_shmem_allocations.name; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(name) ON TABLE pg_catalog.pg_shmem_allocations TO azure_pg_admin;
+
+
+--
+-- TOC entry 4173 (class 0 OID 0)
+-- Dependencies: 99
+-- Name: COLUMN pg_shmem_allocations.off; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(off) ON TABLE pg_catalog.pg_shmem_allocations TO azure_pg_admin;
+
+
+--
+-- TOC entry 4174 (class 0 OID 0)
+-- Dependencies: 99
+-- Name: COLUMN pg_shmem_allocations.size; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(size) ON TABLE pg_catalog.pg_shmem_allocations TO azure_pg_admin;
+
+
+--
+-- TOC entry 4175 (class 0 OID 0)
+-- Dependencies: 99
+-- Name: COLUMN pg_shmem_allocations.allocated_size; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(allocated_size) ON TABLE pg_catalog.pg_shmem_allocations TO azure_pg_admin;
+
+
+--
+-- TOC entry 4176 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.starelid; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(starelid) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4177 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.staattnum; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(staattnum) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4178 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stainherit; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stainherit) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4179 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stanullfrac; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stanullfrac) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4180 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stawidth; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stawidth) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4181 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stadistinct; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stadistinct) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4182 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stakind1; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stakind1) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4183 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stakind2; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stakind2) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4184 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stakind3; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stakind3) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4185 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stakind4; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stakind4) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4186 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stakind5; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stakind5) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4187 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.staop1; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(staop1) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4188 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.staop2; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(staop2) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4189 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.staop3; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(staop3) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4190 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.staop4; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(staop4) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4191 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.staop5; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(staop5) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4192 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stacoll1; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stacoll1) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4193 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stacoll2; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stacoll2) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4194 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stacoll3; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stacoll3) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4195 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stacoll4; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stacoll4) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4196 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stacoll5; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stacoll5) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4197 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stanumbers1; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stanumbers1) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4198 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stanumbers2; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stanumbers2) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4199 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stanumbers3; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stanumbers3) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4200 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stanumbers4; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stanumbers4) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4201 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stanumbers5; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stanumbers5) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4202 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stavalues1; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stavalues1) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4203 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stavalues2; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stavalues2) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4204 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stavalues3; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stavalues3) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4205 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stavalues4; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stavalues4) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4206 (class 0 OID 0)
+-- Dependencies: 39
+-- Name: COLUMN pg_statistic.stavalues5; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(stavalues5) ON TABLE pg_catalog.pg_statistic TO azure_pg_admin;
+
+
+--
+-- TOC entry 4207 (class 0 OID 0)
+-- Dependencies: 64
+-- Name: COLUMN pg_subscription.oid; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(oid) ON TABLE pg_catalog.pg_subscription TO azure_pg_admin;
+
+
+--
+-- TOC entry 4208 (class 0 OID 0)
+-- Dependencies: 64
+-- Name: COLUMN pg_subscription.subdbid; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(subdbid) ON TABLE pg_catalog.pg_subscription TO azure_pg_admin;
+
+
+--
+-- TOC entry 4209 (class 0 OID 0)
+-- Dependencies: 64
+-- Name: COLUMN pg_subscription.subname; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(subname) ON TABLE pg_catalog.pg_subscription TO azure_pg_admin;
+
+
+--
+-- TOC entry 4210 (class 0 OID 0)
+-- Dependencies: 64
+-- Name: COLUMN pg_subscription.subowner; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(subowner) ON TABLE pg_catalog.pg_subscription TO azure_pg_admin;
+
+
+--
+-- TOC entry 4211 (class 0 OID 0)
+-- Dependencies: 64
+-- Name: COLUMN pg_subscription.subenabled; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(subenabled) ON TABLE pg_catalog.pg_subscription TO azure_pg_admin;
+
+
+--
+-- TOC entry 4212 (class 0 OID 0)
+-- Dependencies: 64
+-- Name: COLUMN pg_subscription.subconninfo; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(subconninfo) ON TABLE pg_catalog.pg_subscription TO azure_pg_admin;
+
+
+--
+-- TOC entry 4213 (class 0 OID 0)
+-- Dependencies: 64
+-- Name: COLUMN pg_subscription.subslotname; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(subslotname) ON TABLE pg_catalog.pg_subscription TO azure_pg_admin;
+
+
+--
+-- TOC entry 4214 (class 0 OID 0)
+-- Dependencies: 64
+-- Name: COLUMN pg_subscription.subsynccommit; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(subsynccommit) ON TABLE pg_catalog.pg_subscription TO azure_pg_admin;
+
+
+--
+-- TOC entry 4215 (class 0 OID 0)
+-- Dependencies: 64
+-- Name: COLUMN pg_subscription.subpublications; Type: ACL; Schema: pg_catalog; Owner: azuresu
+--
+
+GRANT SELECT(subpublications) ON TABLE pg_catalog.pg_subscription TO azure_pg_admin;
+
+
+-- Completed on 2025-11-28 15:10:06
+
+--
+-- PostgreSQL database dump complete
+--
+
+\unrestrict dlbpKARpMLUPVVCrVwMbwmuxD1cJi6JRjbTAapVP9HCsOHk2ordviMZNLQ7bL6u
+
