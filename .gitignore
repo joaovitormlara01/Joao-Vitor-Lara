@@ -1,0 +1,15 @@
+# Arquivos de build Java / Maven
+target/
+*.class
+*.jar
+
+# Arquivos compactados
+*.zip
+
+# Arquivos de backup
+*.backup
+
+# IDEs
+*.iml
+.idea/
+.vscode/
